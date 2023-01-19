@@ -22,17 +22,13 @@ libraryDependencies += "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scal
 libraryDependencies += "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % "2.13.5" % "provided"
 
 
-//      local machine
-
-// hadoop yarn cluster
-// master + worker
-
-
-// image => docker repo 2.4 + 3.0 + 3.3
-// kubernetes cluster
-
-
-
 // https://mvnrepository.com/artifact/io.scalaland/chimney
 libraryDependencies += "io.scalaland" %% "chimney" % "0.6.2"
 
+
+libraryDependencies += "com.github.scopt" %% "scopt" % "4.1.0"
+
+libraryDependencies += "com.github.pureconfig" %% "pureconfig" % "0.17.2"
+
+
+//dependencyOverrides += "log4j" % "log4j" % "1.2.17"

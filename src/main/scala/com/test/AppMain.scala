@@ -6,7 +6,7 @@ import io.circe.parser._
 import io.circe.syntax._
 
 import scala.io.{BufferedSource, Source}
-import scala.util.Try
+import scala.util.{Try, Using}
 
 object AppMain extends App {
     println(s"Source path ${args(0)}")
@@ -20,19 +20,29 @@ object AppMain extends App {
     val foo: Foo = Qux(13, Some(14.0))
     println(foo)
 
-    val source = Source.fromFile("src/main/resources/countries.json").mkString
+    Using(Source.fromFile("src/main/resources/countries.json")) {byte =>
+        val source = byte.mkString
+        println(source)
 
-    println(source)
+        val value = decode[List[Foo]](source)
 
+        value match {
+            case Right(value) => value
+            case Left(error) => println(error)
 
-
-    val value = decode[List[Foo]](source)
-
-    value match {
-        case Right(value) => value
-        case Left(error) => println(error)
-
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -68,8 +78,6 @@ object AppMain extends App {
     /*
     *
     * */
-
-    println(source)
 
 /*
     val json: String = foo.asJson.noSpaces

@@ -5,11 +5,15 @@ import io.scalaland.chimney.dsl._
 import com.github.plokhotnyuk.jsoniter_scala.macros._
 import com.github.plokhotnyuk.jsoniter_scala.core._
 
+import java.io.{BufferedReader, FileReader}
+import java.util
+import scala.util.{Failure, Success, Try, Using}
+import collection.mutable._
 
 
 object Practice extends App {
 
-// parse deserialize
+  // parse deserialize
   object in {
     case class MakeCoffee(
                            id: Int,
@@ -19,10 +23,10 @@ object Practice extends App {
 
   object out {
     case class CoffeeMade(
-             id: Int,
-             kind: String,
-             forAddict: String,
-             at: ZonedDateTime)
+                           id: Int,
+                           kind: String,
+                           forAddict: String,
+                           at: ZonedDateTime)
 
   }
 
@@ -31,7 +35,7 @@ object Practice extends App {
 
 
   val command = MakeCoffee(1, "RAF", "test")
-//  process
+  //  process
 
   val coffeeMade = CoffeeMade(
     id = command.id,
@@ -45,24 +49,82 @@ object Practice extends App {
     .transform
   // CoffeeMade(24, "Espresso", "Piotr", "2020-02-03T20:26:59.659647+07:00[Asia/Bangkok]")
 
-//  serialize
+  //  serialize
   case class Device(id: Int, model: String)
-  case class User(name: String, devices: Seq[Device])
+  case class User(name: String, last_name: String,  devices: Seq[Device])
 
   implicit val codec: JsonValueCodec[User] = JsonCodecMaker.make
+
+
 
   val inputt =
     """{
       |"name":"John",
-      |"devices":[{"id":1,"model":"HTC One X"}]
+      |"devices":[{"id":1,"model":"HTC One X", "garbage": "test"}]
       |}""".stripMargin
 
 
-  val user = readFromArray(inputt.getBytes("UTF-8"))
-  println(user)
+  Try(readFromArray(inputt.getBytes("UTF-8"))) match {
+    case Success(value)     => println(value)
+    case Failure(exception) => println(exception)
+  }
+
+  val function: User => Unit = user => println(s"User from res")
+  Try(readFromArray(inputt.getBytes("UTF-8")))
+    .map{function}
+    .recover{case t: Throwable => println(t)}
 
 
-//  val json = writeToArray(User(name = "John", devices = Seq(Device(id = 2, model = "iPhone X"))))
+  val ints: List[Int] = List(1, 2, 3, 4, 5).map(x => x + 5)
+  val flatInts: List[Int] = List(1, 2, 3, 4, 5).flatMap(x => List(x + 5))
+  val unit: Unit = List(1, 2, 3, 4, 5).foreach(x => println(x + 5))
+
+
+  Option(555).foreach(x => println(x))
+
+  val arrList = new util.ArrayList[String]()
+  arrList.add("One")
+  arrList.add("Two")
+  arrList.add("Three")
+
+
+  import scala.collection.JavaConverters._
+
+  val jul: java.util.List[Int] = List(1, 2, 3).asJava
+  val list: List[String] = arrList.asScala.toList
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //  val json = writeToArray(User(name = "John", devices = Seq(Device(id = 2, model = "iPhone X"))))
+
+  case class CountryLite(name: NameLite, area: Float, capital: Seq[String])
+
+  case class NameLite(official: String)
+
+/*
+  println(List(
+    CountryLite(NameLite("Aruba"), 180.0F, List("Oranjestad")),
+    CountryLite(NameLite("Islamic Republic of Afghanistan"), 652230.0F, List("Kabul")))
+    .sortBy(x => x.area)(Ordering[Float].reverse).take(10))
+
+
+  val lines: Try[Seq[String]] =
+    Using(new BufferedReader(new FileReader("file.txt"))) { reader =>
+      Iterator.continually(reader.readLine()).takeWhile(_ != null).toSeq
+    }
+
+*/
 
 
 }
