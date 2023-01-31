@@ -1,9 +1,7 @@
 package com.test
 
-import io.circe._
-import io.circe.generic.auto._
-import io.circe.parser._
-import io.circe.syntax._
+import com.github.plokhotnyuk.jsoniter_scala.macros._
+import com.github.plokhotnyuk.jsoniter_scala.core._
 
 import java.nio.file.{Files, Paths}
 import scala.io.{BufferedSource, Source}
